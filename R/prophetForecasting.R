@@ -8,7 +8,7 @@ prophetForecasting <- function(input){
   } else {
     as.data.frame(input)
   }
-  
+
 df = aggregate(df$y, by = list(df$ds, df$dow, df$holiday), mean)
 
 names(df) = c("ds","dow","holiday","y")
@@ -54,7 +54,7 @@ f.weekendPred = function(df3,x){
     left <- meaN-error
     right <- meaN+error
     dfReturn[i,] = c(as.Date(x[i]),meaN, left, right)
-    
+
   }
   return(dfReturn)
 }
@@ -67,5 +67,5 @@ return(pred)
 }
 
 
-input = read.table("input_data.csv", sep=";", head=T, dec=".")
-prophetForecasting(input)
+# input = read.table("input_data.csv", sep=";", head=T, dec=".")
+# prophetForecasting(input)

@@ -1,0 +1,17 @@
+{
+    "contents" : "library(\"prophet\")\nlibrary(dplyr)\n\nprophetForecasting <- function(input){\n  #input can either be csv file or data\n  df <- if(is.character(input) && file.exists(input)){\n    read.csv(input)\n  } else {\n    as.data.frame(input)\n  }\n\ndf = aggregate(df$y, by = list(df$ds, df$dow, df$holiday), mean)\n\nnames(df) = c(\"ds\",\"dow\",\"holiday\",\"y\")\ndf$ds = as.Date(df$ds)\ndf = df[order(df$ds),]\n\nholidaysdf = read.table(\"holidays.csv\", head=T, sep=\"\\t\")\nnames(holidaysdf) = c(\"ds\", \"holiday\")\nholidaysdf$ds = as.Date(holidaysdf$ds)\n\ndf2 = df[df$dow!=1 & df$dow!=7,]\n\n\nm <- prophet(df2,yearly.seasonality=TRUE, holidays =holidaysdf)\n\nfuture <- make_future_dataframe(m, periods = 7)\ntail(future)\n\nforecast <- predict(m, future)\n#tail(forecast[c('ds', 'yhat', 'yhat_lower', 'yhat_upper')])\n#plot(m, forecast)\nfc = forecast[c('ds', 'yhat', 'yhat_lower', 'yhat_upper')]\n\n\npred = fc[(nrow(fc)-6):nrow(fc),]\n\npred$dow = lubridate::wday(pred$ds)\n\n\ndf3 = df[df$dow==7 | df$dow==1,]\n\nweekendsToPred = pred$ds[which(pred$dow %in% c(1,7))]\n\nf.weekendPred = function(df3,x){\n  dfReturn = data.frame(ds=NA,yhat=NA, yhat_lower=NA, yhat_upper=NA)\n  for(i in 1:length(x)){\n    prev = c(as.Date(x[i])-7,as.Date(x[i])-14)\n    val = c(df3$y[df3$ds %in% prev])\n    meaN = mean(val)\n    sD <- sd(val)\n    n <- 2\n    error <- qnorm(0.975)*sD/sqrt(n)\n    left <- meaN-error\n    right <- meaN+error\n    dfReturn[i,] = c(as.Date(x[i]),meaN, left, right)\n\n  }\n  return(dfReturn)\n}\n\npredW= f.weekendPred(df3,weekendsToPred)\n\npred[which(pred$dow %in% c(1,7)),2:4] = predW[2:4]\n\nreturn(pred)\n}\n\n\n# input = read.table(\"input_data.csv\", sep=\";\", head=T, dec=\".\")\n# prophetForecasting(input)\n",
+    "created" : 1496148358243.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "3|38|66|0|\n",
+    "hash" : "3301708003",
+    "id" : "2BA660D2",
+    "lastKnownWriteTime" : 1496148367,
+    "path" : "~/Git_repos/postgrado/doctorado/OpenCPU/prophetForecasting/R/prophetForecasting.R",
+    "project_path" : "R/prophetForecasting.R",
+    "properties" : {
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

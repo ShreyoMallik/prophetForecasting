@@ -1,5 +1,12 @@
+## cheking if necesary packages are installed (and installing if not)
+list.of.packages <- c("prophet")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
 library("prophet")
-library(dplyr)
+#library(dplyr)
+
+
 
 prophetForecasting <- function(input){
   #input can either be csv file or data

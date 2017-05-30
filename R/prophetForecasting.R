@@ -22,7 +22,7 @@ names(df) = c("ds","dow","holiday","y")
 df$ds = as.Date(df$ds)
 df = df[order(df$ds),]
 
-holidaysdf = read.table("holidays.csv", head=T, sep="\t")
+holidaysdf = read.table("data/holidays.csv", head=T, sep="\t")
 names(holidaysdf) = c("ds", "holiday")
 holidaysdf$ds = as.Date(holidaysdf$ds)
 
